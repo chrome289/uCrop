@@ -16,15 +16,18 @@
             android:orientation="horizontal"/>
 
         <include
+            layout="@layout/ucrop_layout_rotate_wheel"
             android:id="@+id/layout_rotate_wheel"
-            layout="@layout/ucrop_layout_rotate_wheel"/>
+            />
 
         <include
+            layout="@layout/ucrop_layout_scale_wheel"
             android:id="@+id/layout_scale_wheel"
-            layout="@layout/ucrop_layout_scale_wheel"/>
+            />
         <include
+            layout="@layout/ucrop_layout_compress_wheel"
             android:id="@+id/layout_compress_wheel"
-            layout="@layout/ucrop_layout_compress_wheel"/>
+            />
 
     </FrameLayout>
 
@@ -52,7 +55,7 @@
 
             <ImageView
                 android:id="@+id/image_view_state_scale"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="8dp"
                 android:src="@drawable/ucrop_ic_scale"
                 style="@style/ucrop_ImageViewWidgetIcon"
                 />
@@ -74,7 +77,7 @@
 
             <ImageView
                 android:id="@+id/image_view_state_aspect_ratio"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="8dp"
                 android:src="@drawable/ucrop_ic_crop"
                 style="@style/ucrop_ImageViewWidgetIcon"
                 />
@@ -96,7 +99,7 @@
 
             <ImageView
                 android:id="@+id/image_view_state_rotate"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="8dp"
                 android:src="@drawable/ucrop_ic_rotate"
                 style="@style/ucrop_ImageViewWidgetIcon"
                 />
@@ -117,7 +120,7 @@
 
             <ImageView
                 android:id="@+id/image_view_state_compress"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="8dp"
                 android:src="@drawable/ic_settings"
                 style="@style/ucrop_ImageViewWidgetIcon"
                 />
