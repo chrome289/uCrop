@@ -41,4 +41,11 @@
         <item name="android:textSize">@dimen/ucrop_text_size_widget_text</item>
     </style>
 
+    <style name="ucrop_WrapperCompressButton">
+        <item name="android:layout_width">@dimen/ucrop_size_wrapper_compress_button</item>
+        <item name="android:layout_height">@dimen/ucrop_size_wrapper_compress_button</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+    </style>
+\
 </resources>

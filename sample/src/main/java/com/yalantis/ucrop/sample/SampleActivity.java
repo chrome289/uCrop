@@ -131,7 +131,7 @@ public class SampleActivity extends BaseActivity {
             }
         });
         mRadioGroupCompressionSettings.check(R.id.radio_jpeg);
-        mSeekBarQuality.setProgress(UCropActivity.DEFAULT_COMPRESS_QUALITY);
+        mSeekBarQuality.setProgress((int)UCropActivity.DEFAULT_COMPRESS_QUALITY);
         mTextViewQuality.setText(String.format(getString(R.string.format_quality_d), mSeekBarQuality.getProgress()));
         mSeekBarQuality.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

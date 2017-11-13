@@ -22,6 +22,9 @@
         <include
             android:id="@+id/layout_scale_wheel"
             layout="@layout/ucrop_layout_scale_wheel"/>
+        <include
+            android:id="@+id/layout_compress_wheel"
+            layout="@layout/ucrop_layout_compress_wheel"/>
 
     </FrameLayout>
 
@@ -39,38 +42,93 @@
         android:background="@color/ucrop_color_widget_background"
         android:baselineAligned="false"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
         <FrameLayout
             android:id="@+id/state_scale"
-            style="@style/ucrop_WrapperIconState">
+            style="@style/ucrop_WrapperIconState"
+            >
 
             <ImageView
                 android:id="@+id/image_view_state_scale"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/ucrop_ic_scale"
                 style="@style/ucrop_ImageViewWidgetIcon"
-                android:src="@drawable/ucrop_ic_scale"/>
+                />
+            <TextView
+                android:id="@+id/ucrop_textview2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:text="Zoom"
+                />
 
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/state_aspect_ratio"
-            style="@style/ucrop_WrapperIconState">
+            style="@style/ucrop_WrapperIconState"
+            >
 
             <ImageView
                 android:id="@+id/image_view_state_aspect_ratio"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/ucrop_ic_crop"
                 style="@style/ucrop_ImageViewWidgetIcon"
-                android:src="@drawable/ucrop_ic_crop"/>
+                />
+            <TextView
+                android:id="@+id/ucrop_textview3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:text="Aspect Ratio"
+                />
 
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/state_rotate"
-            style="@style/ucrop_WrapperIconState">
+            style="@style/ucrop_WrapperIconState"
+            >
 
             <ImageView
                 android:id="@+id/image_view_state_rotate"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/ucrop_ic_rotate"
                 style="@style/ucrop_ImageViewWidgetIcon"
-                android:src="@drawable/ucrop_ic_rotate"/>
+                />
+            <TextView
+                android:id="@+id/ucrop_textview4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:text="Rotate"
+                />
+
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/state_compress"
+            style="@style/ucrop_WrapperIconState"
+            >
+
+            <ImageView
+                android:id="@+id/image_view_state_compress"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/ic_settings"
+                style="@style/ucrop_ImageViewWidgetIcon"
+                />
+            <TextView
+                android:id="@+id/ucrop_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:text="Compress"
+                />
 
         </FrameLayout>
 
