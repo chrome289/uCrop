@@ -46,6 +46,7 @@
         <item name="android:layout_height">@dimen/ucrop_size_wrapper_compress_button</item>
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:clickable">true</item>
+      <item name="android:textColor">@color/ucrop_scale_text_view_selector</item>
     </style>
 \
 </resources>

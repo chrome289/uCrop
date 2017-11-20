@@ -16,9 +16,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.yalantis.ucrop.model.AspectRatio;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -42,6 +40,9 @@ public class UCrop {
     public static final String EXTRA_OUTPUT_IMAGE_HEIGHT = EXTRA_PREFIX + ".ImageHeight";
     public static final String EXTRA_OUTPUT_OFFSET_X = EXTRA_PREFIX + ".OffsetX";
     public static final String EXTRA_OUTPUT_OFFSET_Y = EXTRA_PREFIX + ".OffsetY";
+
+    public static final String EXTRA_OUTPUT_FORMAT = EXTRA_PREFIX + ".ImageFormat";
+
     public static final String EXTRA_ERROR = EXTRA_PREFIX + ".Error";
 
     public static final String EXTRA_ASPECT_RATIO_X = EXTRA_PREFIX + ".AspectRatioX";
@@ -53,16 +54,6 @@ public class UCrop {
     private Intent mCropIntent;
     private Bundle mCropOptionsBundle;
 
-    /**
-     * This method creates new Intent builder and sets both source and destination image URIs.
-     *
-     * @param source      Uri for image to crop
-     * @param destination Uri for saving the cropped image
-     */
-    public static UCrop of(@NonNull Uri source, @NonNull Uri destination) {
-        return new UCrop(source, destination);
-    }
-
     private UCrop(@NonNull Uri source, @NonNull Uri destination) {
         mCropIntent = new Intent();
         mCropOptionsBundle = new Bundle();
@@ -71,112 +62,13 @@ public class UCrop {
     }
 
     /**
-     * Set an aspect ratio for crop bounds.
-     * User won't see the menu with other ratios options.
+     * This method creates new Intent builder and sets both source and destination image URIs.
      *
-     * @param x aspect ratio X
-     * @param y aspect ratio Y
+     * @param source Uri for image to crop
+     * @param destination Uri for saving the cropped image
      */
-    public UCrop withAspectRatio(float x, float y) {
-        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_X, x);
-        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_Y, y);
-        return this;
-    }
-
-    /**
-     * Set an aspect ratio for crop bounds that is evaluated from source image width and height.
-     * User won't see the menu with other ratios options.
-     */
-    public UCrop useSourceImageAspectRatio() {
-        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_X, 0);
-        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_Y, 0);
-        return this;
-    }
-
-    /**
-     * Set maximum size for result cropped image.
-     *
-     * @param width  max cropped image width
-     * @param height max cropped image height
-     */
-    public UCrop withMaxResultSize(@IntRange(from = 100) int width, @IntRange(from = 100) int height) {
-        mCropOptionsBundle.putInt(EXTRA_MAX_SIZE_X, width);
-        mCropOptionsBundle.putInt(EXTRA_MAX_SIZE_Y, height);
-        return this;
-    }
-
-    public UCrop withOptions(@NonNull Options options) {
-        mCropOptionsBundle.putAll(options.getOptionBundle());
-        return this;
-    }
-
-    /**
-     * Send the crop Intent from an Activity
-     *
-     * @param activity Activity to receive result
-     */
-    public void start(@NonNull Activity activity) {
-        start(activity, REQUEST_CROP);
-    }
-
-    /**
-     * Send the crop Intent from an Activity with a custom request code
-     *
-     * @param activity    Activity to receive result
-     * @param requestCode requestCode for result
-     */
-    public void start(@NonNull Activity activity, int requestCode) {
-        activity.startActivityForResult(getIntent(activity), requestCode);
-    }
-
-    /**
-     * Send the crop Intent from a Fragment
-     *
-     * @param fragment Fragment to receive result
-     */
-    public void start(@NonNull Context context, @NonNull Fragment fragment) {
-        start(context, fragment, REQUEST_CROP);
-    }
-
-    /**
-     * Send the crop Intent from a support library Fragment
-     *
-     * @param fragment Fragment to receive result
-     */
-    public void start(@NonNull Context context, @NonNull android.support.v4.app.Fragment fragment) {
-        start(context, fragment, REQUEST_CROP);
-    }
-
-    /**
-     * Send the crop Intent with a custom request code
-     *
-     * @param fragment    Fragment to receive result
-     * @param requestCode requestCode for result
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void start(@NonNull Context context, @NonNull Fragment fragment, int requestCode) {
-        fragment.startActivityForResult(getIntent(context), requestCode);
-    }
-
-    /**
-     * Send the crop Intent with a custom request code
-     *
-     * @param fragment    Fragment to receive result
-     * @param requestCode requestCode for result
-     */
-    public void start(@NonNull Context context, @NonNull android.support.v4.app.Fragment fragment, int requestCode) {
-        fragment.startActivityForResult(getIntent(context), requestCode);
-    }
-
-    /**
-     * Get Intent to start {@link UCropActivity}
-     *
-     * @return Intent for {@link UCropActivity}
-     */
-    public Intent getIntent(@NonNull Context context) {
-        mCropIntent.setClass(context, UCropActivity.class);
-        mCropIntent.putExtras(mCropOptionsBundle);
-        return mCropIntent;
+    public static UCrop of(@NonNull Uri source, @NonNull Uri destination) {
+        return new UCrop(source, destination);
     }
 
     /**
@@ -184,8 +76,7 @@ public class UCrop {
      *
      * @param intent crop result intent
      */
-    @Nullable
-    public static Uri getOutput(@NonNull Intent intent) {
+    @Nullable public static Uri getOutput(@NonNull Intent intent) {
         return intent.getParcelableExtra(EXTRA_OUTPUT_URI);
     }
 
@@ -218,16 +109,134 @@ public class UCrop {
     }
 
     /**
+     * Retrieve compression format from the result Intent
+     *
+     * @param intent crop result intent
+     * @return compression format as integers, 0 for JPEG, 1 for PNG and 2 for Webp
+     */
+    public static int getOutputImageFormat(@NonNull Intent intent) {
+        return intent.getIntExtra(EXTRA_OUTPUT_FORMAT, 0);
+    }
+
+    /**
      * Method retrieves error from the result intent.
      *
      * @param result crop result Intent
      * @return Throwable that could happen while image processing
      */
-    @Nullable
-    public static Throwable getError(@NonNull Intent result) {
+    @Nullable public static Throwable getError(@NonNull Intent result) {
         return (Throwable) result.getSerializableExtra(EXTRA_ERROR);
     }
 
+    /**
+     * Set an aspect ratio for crop bounds.
+     * User won't see the menu with other ratios options.
+     *
+     * @param x aspect ratio X
+     * @param y aspect ratio Y
+     */
+    public UCrop withAspectRatio(float x, float y) {
+        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_X, x);
+        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_Y, y);
+        return this;
+    }
+
+    /**
+     * Set an aspect ratio for crop bounds that is evaluated from source image width and height.
+     * User won't see the menu with other ratios options.
+     */
+    public UCrop useSourceImageAspectRatio() {
+        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_X, 0);
+        mCropOptionsBundle.putFloat(EXTRA_ASPECT_RATIO_Y, 0);
+        return this;
+    }
+
+    /**
+     * Set maximum size for result cropped image.
+     *
+     * @param width max cropped image width
+     * @param height max cropped image height
+     */
+    public UCrop withMaxResultSize(@IntRange(from = 100) int width, @IntRange(from = 100) int height) {
+        mCropOptionsBundle.putInt(EXTRA_MAX_SIZE_X, width);
+        mCropOptionsBundle.putInt(EXTRA_MAX_SIZE_Y, height);
+        return this;
+    }
+
+    public UCrop withOptions(@NonNull Options options) {
+        mCropOptionsBundle.putAll(options.getOptionBundle());
+        return this;
+    }
+
+    /**
+     * Send the crop Intent from an Activity
+     *
+     * @param activity Activity to receive result
+     */
+    public void start(@NonNull Activity activity) {
+        start(activity, REQUEST_CROP);
+    }
+
+    /**
+     * Send the crop Intent from an Activity with a custom request code
+     *
+     * @param activity Activity to receive result
+     * @param requestCode requestCode for result
+     */
+    public void start(@NonNull Activity activity, int requestCode) {
+        activity.startActivityForResult(getIntent(activity), requestCode);
+    }
+
+    /**
+     * Send the crop Intent from a Fragment
+     *
+     * @param fragment Fragment to receive result
+     */
+    public void start(@NonNull Context context, @NonNull Fragment fragment) {
+        start(context, fragment, REQUEST_CROP);
+    }
+
+    /**
+     * Send the crop Intent from a support library Fragment
+     *
+     * @param fragment Fragment to receive result
+     */
+    public void start(@NonNull Context context, @NonNull android.support.v4.app.Fragment fragment) {
+        start(context, fragment, REQUEST_CROP);
+    }
+
+    /**
+     * Send the crop Intent with a custom request code
+     *
+     * @param fragment Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB) public void start(@NonNull Context context,
+            @NonNull Fragment fragment, int requestCode) {
+        fragment.startActivityForResult(getIntent(context), requestCode);
+    }
+
+    /**
+     * Send the crop Intent with a custom request code
+     *
+     * @param fragment Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    public void start(@NonNull Context context, @NonNull android.support.v4.app.Fragment fragment,
+            int requestCode) {
+        fragment.startActivityForResult(getIntent(context), requestCode);
+    }
+
+    /**
+     * Get Intent to start {@link UCropActivity}
+     *
+     * @return Intent for {@link UCropActivity}
+     */
+    public Intent getIntent(@NonNull Context context) {
+        mCropIntent.setClass(context, UCropActivity.class);
+        mCropIntent.putExtras(mCropOptionsBundle);
+        return mCropIntent;
+    }
 
     /**
      * Class that helps to setup advanced configs that are not commonly used.
@@ -276,20 +285,19 @@ public class UCrop {
 
         public static final String EXTRA_UCROP_ROOT_VIEW_BACKGROUND_COLOR = EXTRA_PREFIX + ".UcropRootViewBackgroundColor";
 
-
         private final Bundle mOptionBundle;
 
         public Options() {
             mOptionBundle = new Bundle();
         }
 
-        @NonNull
-        public Bundle getOptionBundle() {
+        @NonNull public Bundle getOptionBundle() {
             return mOptionBundle;
         }
 
         /**
-         * Set one of {@link android.graphics.Bitmap.CompressFormat} that will be used to save resulting Bitmap.
+         * Set one of {@link android.graphics.Bitmap.CompressFormat} that will be used to save
+         * resulting Bitmap.
          */
         public void setCompressionFormat(@NonNull Bitmap.CompressFormat format) {
             mOptionBundle.putString(EXTRA_COMPRESSION_FORMAT_NAME, format.name());
@@ -306,13 +314,15 @@ public class UCrop {
          * Choose what set of gestures will be enabled on each tab - if any.
          */
         public void setAllowedGestures(@UCropActivity.GestureTypes int tabScale,
-                                       @UCropActivity.GestureTypes int tabRotate,
-                                       @UCropActivity.GestureTypes int tabAspectRatio) {
-            mOptionBundle.putIntArray(EXTRA_ALLOWED_GESTURES, new int[]{tabScale, tabRotate, tabAspectRatio});
+                @UCropActivity.GestureTypes int tabRotate,
+                @UCropActivity.GestureTypes int tabAspectRatio) {
+            mOptionBundle.putIntArray(EXTRA_ALLOWED_GESTURES,
+                    new int[] { tabScale, tabRotate, tabAspectRatio });
         }
 
         /**
-         * This method sets multiplier that is used to calculate max image scale from min image scale.
+         * This method sets multiplier that is used to calculate max image scale from min image
+         * scale.
          *
          * @param maxScaleMultiplier - (minScale * maxScaleMultiplier) = maxScale
          */
@@ -330,7 +340,8 @@ public class UCrop {
         }
 
         /**
-         * Setter for max size for both width and height of bitmap that will be decoded from an input Uri and used in the view.
+         * Setter for max size for both width and height of bitmap that will be decoded from an
+         * input Uri and used in the view.
          *
          * @param maxBitmapSize - size in pixels
          */
@@ -423,14 +434,16 @@ public class UCrop {
         }
 
         /**
-         * @param color - desired resolved color of the active and selected widget (default is orange) and progress wheel middle line
+         * @param color - desired resolved color of the active and selected widget (default is
+         * orange) and progress wheel middle line
          */
         public void setActiveWidgetColor(@ColorInt int color) {
             mOptionBundle.putInt(EXTRA_UCROP_COLOR_WIDGET_ACTIVE, color);
         }
 
         /**
-         * @param color - desired resolved color of Toolbar text and buttons (default is darker orange)
+         * @param color - desired resolved color of Toolbar text and buttons (default is darker
+         * orange)
          */
         public void setToolbarWidgetColor(@ColorInt int color) {
             mOptionBundle.putInt(EXTRA_UCROP_WIDGET_COLOR_TOOLBAR, color);
@@ -481,8 +494,9 @@ public class UCrop {
         /**
          * Pass an ordered list of desired aspect ratios that should be available for a user.
          *
-         * @param selectedByDefault - index of aspect ratio option that is selected by default (starts with 0).
-         * @param aspectRatio       - list of aspect ratio options that are available to user
+         * @param selectedByDefault - index of aspect ratio option that is selected by default
+         * (starts with 0).
+         * @param aspectRatio - list of aspect ratio options that are available to user
          */
         public void setAspectRatioOptions(int selectedByDefault, AspectRatio... aspectRatio) {
             if (selectedByDefault > aspectRatio.length) {
@@ -525,14 +539,12 @@ public class UCrop {
         /**
          * Set maximum size for result cropped image.
          *
-         * @param width  max cropped image width
+         * @param width max cropped image width
          * @param height max cropped image height
          */
         public void withMaxResultSize(@IntRange(from = 100) int width, @IntRange(from = 100) int height) {
             mOptionBundle.putInt(EXTRA_MAX_SIZE_X, width);
             mOptionBundle.putInt(EXTRA_MAX_SIZE_Y, height);
         }
-
     }
-
 }

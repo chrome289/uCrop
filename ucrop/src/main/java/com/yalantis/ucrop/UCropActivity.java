@@ -3,7 +3,6 @@ package com.yalantis.ucrop;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
@@ -67,7 +66,7 @@ public class UCropActivity extends AppCompatActivity {
     private static final int TABS_COUNT = 4;
     private static final int SCALE_WIDGET_SENSITIVITY_COEFFICIENT = 15000;
     private static final int ROTATE_WIDGET_SENSITIVITY_COEFFICIENT = 42;
-	private static final float COMPRESS_WIDGET_SENSITIVITY_COEFFICIENT = 42;
+    private static final float COMPRESS_WIDGET_SENSITIVITY_COEFFICIENT = 42;
     private String mToolbarTitle;
     // Enables dynamic coloring
     private int mToolbarColor;
@@ -224,7 +223,8 @@ public class UCropActivity extends AppCompatActivity {
         }
         mCompressFormat = (compressFormat == null) ? DEFAULT_COMPRESS_FORMAT : compressFormat;
 
-        mCompressQuality = intent.getIntExtra(UCrop.Options.EXTRA_COMPRESSION_QUALITY, (int)UCropActivity.DEFAULT_COMPRESS_QUALITY);
+        mCompressQuality = intent.getIntExtra(UCrop.Options.EXTRA_COMPRESSION_QUALITY,
+                (int) UCropActivity.DEFAULT_COMPRESS_QUALITY);
 
         // Gestures options
         int[] allowedGestures = intent.getIntArrayExtra(UCrop.Options.EXTRA_ALLOWED_GESTURES);
@@ -403,7 +403,8 @@ public class UCropActivity extends AppCompatActivity {
         stateRotateImageView.setImageDrawable(
                 new SelectedStateListDrawable(stateRotateImageView.getDrawable(), mActiveWidgetColor));
         stateCompressImageView.setImageDrawable(
-                new SelectedStateListDrawable(stateCompressImageView.getDrawable(), mActiveWidgetColor));
+                new SelectedStateListDrawable(stateCompressImageView.getDrawable(),
+                        mActiveWidgetColor));
         stateAspectRatioImageView.setImageDrawable(new SelectedStateListDrawable(stateAspectRatioImageView.getDrawable(),
                 mActiveWidgetColor));
     }
@@ -514,7 +515,7 @@ public class UCropActivity extends AppCompatActivity {
         ((HorizontalProgressWheelView) findViewById(R.id.compress_scroll_wheel)).setScrollingListener(
                 new HorizontalProgressWheelView.ScrollingListener() {
                     @Override public void onScroll(float delta, float totalDistance) {
-                        Log.v(TAG,"delta "+delta+" shall we"+delta / COMPRESS_WIDGET_SENSITIVITY_COEFFICIENT);
+                        //   Log.v(TAG, "delta " + delta + " shall we" + delta / COMPRESS_WIDGET_SENSITIVITY_COEFFICIENT);
                         setCompressFactor(delta / COMPRESS_WIDGET_SENSITIVITY_COEFFICIENT);
                     }
 
@@ -534,10 +535,12 @@ public class UCropActivity extends AppCompatActivity {
         mTextViewJpg.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 if (mCompressFormat == Bitmap.CompressFormat.PNG) {
-                    mTextViewJpg.setTextColor(Color.parseColor("#FF6E40"));
+                    mTextViewJpg.setTextColor(
+                            getResources().getColor(R.color.ucrop_color_widget_active));
                     mCompressFormat = Bitmap.CompressFormat.JPEG;
 
-                    mTextViewPng.setTextColor(Color.parseColor("#808080"));
+                    mTextViewPng.setTextColor(
+                            getResources().getColor(R.color.ucrop_color_widget_text));
                 }
             }
         });
@@ -546,14 +549,15 @@ public class UCropActivity extends AppCompatActivity {
         mTextViewPng.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 if (mCompressFormat == Bitmap.CompressFormat.JPEG) {
-                    mTextViewPng.setTextColor(Color.parseColor("#FF6E40"));
+                    mTextViewPng.setTextColor(
+                            getResources().getColor(R.color.ucrop_color_widget_active));
                     mCompressFormat = Bitmap.CompressFormat.PNG;
 
-                    mTextViewJpg.setTextColor(Color.parseColor("#808080"));
+                    mTextViewJpg.setTextColor(
+                            getResources().getColor(R.color.ucrop_color_widget_text));
                 }
             }
         });
-
     }
 
     private void setupScaleWidget() {
@@ -686,11 +690,13 @@ public class UCropActivity extends AppCompatActivity {
         mShowLoader = true;
         supportInvalidateOptionsMenu();
 
-        mGestureCropImageView.cropAndSaveImage(mCompressFormat, (int)mCompressQuality, new BitmapCropCallback() {
+        mGestureCropImageView.cropAndSaveImage(mCompressFormat, (int) mCompressQuality,
+                new BitmapCropCallback() {
 
-            @Override
-            public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY, int imageWidth, int imageHeight) {
-                setResultUri(resultUri, mGestureCropImageView.getTargetAspectRatio(), offsetX, offsetY, imageWidth, imageHeight);
+            @Override public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY,
+                    int imageWidth, int imageHeight, Bitmap.CompressFormat compressFormat) {
+                setResultUri(resultUri, mGestureCropImageView.getTargetAspectRatio(), offsetX,
+                        offsetY, imageWidth, imageHeight, compressFormat);
                 finish();
             }
 
@@ -701,13 +707,15 @@ public class UCropActivity extends AppCompatActivity {
         });
     }
 
-    protected void setResultUri(Uri uri, float resultAspectRatio, int offsetX, int offsetY, int imageWidth, int imageHeight) {
+    protected void setResultUri(Uri uri, float resultAspectRatio, int offsetX, int offsetY,
+            int imageWidth, int imageHeight, Bitmap.CompressFormat compressFormat) {
         setResult(RESULT_OK, new Intent().putExtra(UCrop.EXTRA_OUTPUT_URI, uri)
                 .putExtra(UCrop.EXTRA_OUTPUT_CROP_ASPECT_RATIO, resultAspectRatio)
                 .putExtra(UCrop.EXTRA_OUTPUT_IMAGE_WIDTH, imageWidth)
                 .putExtra(UCrop.EXTRA_OUTPUT_IMAGE_HEIGHT, imageHeight)
                 .putExtra(UCrop.EXTRA_OUTPUT_OFFSET_X, offsetX)
-                .putExtra(UCrop.EXTRA_OUTPUT_OFFSET_Y, offsetY));
+                .putExtra(UCrop.EXTRA_OUTPUT_OFFSET_Y, offsetY)
+                .putExtra(UCrop.EXTRA_OUTPUT_FORMAT, compressFormat));
     }
 
     protected void setResultError(Throwable throwable) {
