@@ -46,8 +46,8 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
     private int mCroppedImageWidth, mCroppedImageHeight;
     private int cropOffsetX, cropOffsetY;
 
-    public BitmapCropTask(@Nullable Bitmap viewBitmap, @NonNull ImageState imageState, @NonNull CropParameters cropParameters,
-                          @Nullable BitmapCropCallback cropCallback) {
+    public BitmapCropTask(@Nullable Bitmap viewBitmap, @NonNull ImageState imageState,
+            @NonNull CropParameters cropParameters, @Nullable BitmapCropCallback cropCallback) {
 
         mViewBitmap = viewBitmap;
         mCropRect = imageState.getCropRect();
@@ -73,9 +73,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
             int width, int height, float angle, float resizeScale, int format, int quality,
             int exifDegrees, int exifTranslation) throws IOException, OutOfMemoryError;
 
-    @Override
-    @Nullable
-    protected Throwable doInBackground(Void... params) {
+    @Override @Nullable protected Throwable doInBackground(Void... params) {
         if (mViewBitmap == null) {
             return new NullPointerException("ViewBitmap is null");
         } else if (mViewBitmap.isRecycled()) {
@@ -140,12 +138,13 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         Log.i(TAG, "Should crop: " + shouldCrop);
 
         if (shouldCrop) {
-            boolean cropped = cropCImg(mImageInputPath, mImageOutputPath,
-                    cropOffsetX, cropOffsetY, mCroppedImageWidth, mCroppedImageHeight,
-                    mCurrentAngle, resizeScale, mCompressFormat.ordinal(), mCompressQuality,
-                    mExifInfo.getExifDegrees(), mExifInfo.getExifTranslation());
+            boolean cropped = cropCImg(mImageInputPath, mImageOutputPath, cropOffsetX, cropOffsetY,
+                    mCroppedImageWidth, mCroppedImageHeight, mCurrentAngle, resizeScale,
+                    mCompressFormat.ordinal(), mCompressQuality, mExifInfo.getExifDegrees(),
+                    mExifInfo.getExifTranslation());
             if (cropped && mCompressFormat.equals(Bitmap.CompressFormat.JPEG)) {
-                ImageHeaderParser.copyExif(originalExif, mCroppedImageWidth, mCroppedImageHeight, mImageOutputPath);
+                ImageHeaderParser.copyExif(originalExif, mCroppedImageWidth, mCroppedImageHeight,
+                        mImageOutputPath);
             }
             return cropped;
         } else {
@@ -155,10 +154,11 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     /**
-     * Check whether an image should be cropped at all or just file can be copied to the destination path.
+     * Check whether an image should be cropped at all or just file can be copied to the destination
+     * path.
      * For each 1000 pixels there is one pixel of error due to matrix calculations etc.
      *
-     * @param width  - crop area width
+     * @param width - crop area width
      * @param height - crop area height
      * @return - true if image must be cropped, false - if original image fits requirements
      */
@@ -177,17 +177,27 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         return shouldI;
     }
 
-    @Override
-    protected void onPostExecute(@Nullable Throwable t) {
+    @Override protected void onPostExecute(@Nullable Throwable t) {
         if (mCropCallback != null) {
             if (t == null) {
                 Uri uri = Uri.fromFile(new File(mImageOutputPath));
+                int compressFormat = 0;
+                switch (mCompressFormat) {
+                    case JPEG:
+                        compressFormat = 0;
+                        break;
+                    case PNG:
+                        compressFormat = 1;
+                        break;
+                    case WEBP:
+                        compressFormat = 2;
+                        break;
+                }
                 mCropCallback.onBitmapCropped(uri, cropOffsetX, cropOffsetY, mCroppedImageWidth,
-                        mCroppedImageHeight, mCompressFormat);
+                        mCroppedImageHeight, compressFormat);
             } else {
                 mCropCallback.onCropFailure(t);
             }
         }
     }
-
 }

@@ -532,11 +532,11 @@ public class UCropActivity extends AppCompatActivity {
                 mActiveWidgetColor);
 
         mTextViewJpg = (TextView) findViewById(R.id.text_view_jpg);
+        mTextViewJpg.setTextColor(mActiveWidgetColor);
         mTextViewJpg.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 if (mCompressFormat == Bitmap.CompressFormat.PNG) {
-                    mTextViewJpg.setTextColor(
-                            getResources().getColor(R.color.ucrop_color_widget_active));
+                    mTextViewJpg.setTextColor(mActiveWidgetColor);
                     mCompressFormat = Bitmap.CompressFormat.JPEG;
 
                     mTextViewPng.setTextColor(
@@ -549,8 +549,7 @@ public class UCropActivity extends AppCompatActivity {
         mTextViewPng.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 if (mCompressFormat == Bitmap.CompressFormat.JPEG) {
-                    mTextViewPng.setTextColor(
-                            getResources().getColor(R.color.ucrop_color_widget_active));
+                    mTextViewPng.setTextColor(mActiveWidgetColor);
                     mCompressFormat = Bitmap.CompressFormat.PNG;
 
                     mTextViewJpg.setTextColor(
@@ -604,7 +603,6 @@ public class UCropActivity extends AppCompatActivity {
         if (mCompressQuality < 0.0f) mCompressQuality = 0.0f;
 
         if (mTextViewCompressFactor != null) {
-            //Log.v(TAG,mCompressQuality+" ****");
             mTextViewCompressFactor.setText(
                     String.format(Locale.getDefault(), "%.0f", ((float) mCompressQuality)));
         }
@@ -694,7 +692,7 @@ public class UCropActivity extends AppCompatActivity {
                 new BitmapCropCallback() {
 
             @Override public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY,
-                    int imageWidth, int imageHeight, Bitmap.CompressFormat compressFormat) {
+                    int imageWidth, int imageHeight, int compressFormat) {
                 setResultUri(resultUri, mGestureCropImageView.getTargetAspectRatio(), offsetX,
                         offsetY, imageWidth, imageHeight, compressFormat);
                 finish();
@@ -708,7 +706,9 @@ public class UCropActivity extends AppCompatActivity {
     }
 
     protected void setResultUri(Uri uri, float resultAspectRatio, int offsetX, int offsetY,
-            int imageWidth, int imageHeight, Bitmap.CompressFormat compressFormat) {
+            int imageWidth, int imageHeight, int compressFormat) {
+
+        Log.v(TAG,"8888888 "+compressFormat);
         setResult(RESULT_OK, new Intent().putExtra(UCrop.EXTRA_OUTPUT_URI, uri)
                 .putExtra(UCrop.EXTRA_OUTPUT_CROP_ASPECT_RATIO, resultAspectRatio)
                 .putExtra(UCrop.EXTRA_OUTPUT_IMAGE_WIDTH, imageWidth)
